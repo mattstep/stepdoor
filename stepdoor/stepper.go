@@ -7,6 +7,7 @@ import (
 )
 
 type Stepper interface {
+	Start()
 	Step(count int) LimitError
 	Clockwise()
 	CounterClockwise()
@@ -45,16 +46,18 @@ func NewStepperMotor(stepPinNumber int, directionPinNumber int, sleepPinNumber i
 		steps: 0,
 	}
 
-	sm.stepPin.Output()
-	sm.stepPin.Low()
-
-	sm.directionPin.Output()
-	sm.directionPin.Low()
-
-	sm.sleepPin.Output()
-	sm.sleepPin.High()
-
 	return sm
+}
+
+func (s StepperMotor) Start() {
+	s.stepPin.Output()
+	s.stepPin.Low()
+
+	s.directionPin.Output()
+	s.directionPin.Low()
+
+	s.sleepPin.Output()
+	s.sleepPin.High()
 }
 
 func (s StepperMotor) Step(count int) LimitError {

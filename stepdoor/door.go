@@ -51,6 +51,9 @@ func NewStepDoor(mapping DoorPinMapping) *StepDoor {
 		log.Errorf("unable to initialize door : %v", err)
 		return nil
 	}
+	stepDoor.stepper.Start()
+	stepDoor.topLimit.Start()
+	stepDoor.bottomLimit.Start()
 	return stepDoor
 }
 

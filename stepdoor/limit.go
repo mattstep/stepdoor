@@ -4,6 +4,7 @@ import "github.com/stianeikeland/go-rpio/v4"
 
 
 type Limit interface {
+	Start()
 	AtLimit() bool
 }
 
@@ -15,6 +16,10 @@ func NewLimit(pinNumber int) *LimitSwitch {
 	pin := rpio.Pin(pinNumber)
 	pin.Input()
 	return &LimitSwitch{gpioPin: pin}
+}
+
+func (ls LimitSwitch) Start() {
+	ls.gpioPin.Input()
 }
 
 func (ls LimitSwitch) AtLimit() bool {
