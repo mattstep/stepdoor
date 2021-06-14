@@ -10,8 +10,8 @@ func main() {
   door := stepdoor.NewStepDoor(stepdoor.DoorPinMapping{
     TopLimitSwitchPin:        17,
     BottomLimitSwitchPin:     18,
-    StepperMotorDirectionPin: 14,
-    StepperMotorStepPin:      4,
+    StepperMotorDirectionPin: 4,
+    StepperMotorStepPin:      14,
     StepperMotorSleepPin:     15,
   })
   
