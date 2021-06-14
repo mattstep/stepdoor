@@ -43,9 +43,9 @@ type DoorPinMapping struct {
 
 func NewStepDoor(mapping DoorPinMapping) *StepDoor {
 	stepDoor := &StepDoor{
+		stepper:     NewStepperMotor(mapping.StepperMotorStepPin, mapping.StepperMotorDirectionPin, mapping.StepperMotorSleepPin),
 		topLimit:    NewLimit(mapping.TopLimitSwitchPin),
 		bottomLimit: NewLimit(mapping.BottomLimitSwitchPin),
-		stepper:     NewStepperMotor(mapping.StepperMotorStepPin, mapping.StepperMotorDirectionPin, mapping.StepperMotorSleepPin),
 	}
 	if err := rpio.Open(); err != nil {
 		log.Errorf("unable to initialize door : %v", err)
