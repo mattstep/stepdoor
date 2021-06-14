@@ -14,7 +14,6 @@ type LimitSwitch struct {
 
 func NewLimit(pinNumber int) *LimitSwitch {
 	pin := rpio.Pin(pinNumber)
-	pin.Input()
 	return &LimitSwitch{gpioPin: pin}
 }
 
