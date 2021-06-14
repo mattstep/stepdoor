@@ -33,19 +33,19 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("Door has been opened.")
+		fmt.Println("Door has been opened.")
 	case "close" :
 		err := stepdoor.NewStepDoor(pinMapping).Close()
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("Door has been closed.")
+		fmt.Println("Door has been closed.")
 	case "interrupt" :
 		door := stepdoor.NewStepDoor(pinMapping)
 		door.Interrupt()
-		fmt.Printf("Door has been interrupted. Current state is %v", door.Current())
+		fmt.Printf("Door has been interrupted. Current state is %v\n", door.Current())
 	case "state" :
-		fmt.Printf("Door's current state is %v", stepdoor.NewStepDoor(pinMapping).Current())
+		fmt.Printf("Door's current state is %v\n", stepdoor.NewStepDoor(pinMapping).Current())
 	default:
 		panic(ctx.Command())
 	}

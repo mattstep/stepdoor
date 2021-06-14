@@ -32,7 +32,7 @@ const (
 	CounterClockwise
 )
 
-const SteppingPeriod = 2 * time.Microsecond;
+const SteppingPeriod = 10 * time.Microsecond
 
 // 4x microstepping * 580mm / (1.8deg/step * 8mm/360deg) = 240,000 microsteps
 const maxSteps = 58000
