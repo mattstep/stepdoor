@@ -67,10 +67,8 @@ func (s StepperMotor) Step(count int) LimitError {
 
 	if s.steps + count < maxSteps {
 		for i:=0; i < count; i++ {
-			s.stepPin.Low()
-			time.Sleep(SteppingPeriod / 2)
-			s.stepPin.High()
-			time.Sleep(SteppingPeriod / 2)
+			s.stepPin.Toggle()
+			time.Sleep(SteppingPeriod)
 			s.steps++
 		}
 	} else {
