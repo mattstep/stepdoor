@@ -17,8 +17,8 @@ var CLI struct {
 var pinMapping = stepdoor.DoorPinMapping{
 	TopLimitSwitchPin:        17,
 	BottomLimitSwitchPin:     18,
-	StepperMotorDirectionPin: 4,
-	StepperMotorStepPin:      14,
+	StepperMotorDirectionPin: 14,
+	StepperMotorStepPin:      4,
 	StepperMotorSleepPin:     15,
 }
 
