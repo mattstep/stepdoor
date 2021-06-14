@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/alecthomas/kong"
+	"github.com/stianeikeland/go-rpio/v4"
 	"stepdoor/stepdoor"
 )
 
@@ -22,6 +23,8 @@ var pinMapping = stepdoor.DoorPinMapping{
 }
 
 func main() {
+	defer rpio.Close()
+
 	ctx := kong.Parse(&CLI)
 
 	switch ctx.Command() {

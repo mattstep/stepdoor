@@ -3,6 +3,7 @@ package stepdoor
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"github.com/stianeikeland/go-rpio/v4"
 	"sync"
 )
 
@@ -41,11 +42,16 @@ type DoorPinMapping struct {
 }
 
 func NewStepDoor(mapping DoorPinMapping) *StepDoor {
-	return &StepDoor{
+	stepDoor := &StepDoor{
 		topLimit:    NewLimit(mapping.TopLimitSwitchPin),
 		bottomLimit: NewLimit(mapping.BottomLimitSwitchPin),
 		stepper:     NewStepperMotor(mapping.StepperMotorStepPin, mapping.StepperMotorDirectionPin, mapping.StepperMotorSleepPin),
 	}
+	if err := rpio.Open(); err != nil {
+		log.Errorf("unable to initialize door : %v", err)
+		return nil
+	}
+	return stepDoor
 }
 
 func (s StepDoor) Open() error {

@@ -2,11 +2,14 @@ package main
 
 import (
   "github.com/gin-gonic/gin"
+  "github.com/stianeikeland/go-rpio/v4"
   . "net/http"
   "stepdoor/stepdoor"
 )
 
 func main() {
+  defer rpio.Close()
+
   door := stepdoor.NewStepDoor(stepdoor.DoorPinMapping{
     TopLimitSwitchPin:        17,
     BottomLimitSwitchPin:     18,
