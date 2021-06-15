@@ -116,6 +116,8 @@ func (s StepDoor) moveToLimit(limit Limit) error {
 			if interrupted {
 				return fmt.Errorf("door moving interrupted")
 			}
+		default:
+			//noop
 		}
 	}
 	return nil

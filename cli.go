@@ -10,7 +10,6 @@ import (
 var CLI struct {
 	Open struct {} `cmd: help:"Open the door"`
 	Close struct {} `cmd: help:"Close the door"`
-	Interrupt struct{} `cmd: help:"Interrupt an existing operation on the door"`
 	State struct{} `cmd: help:"Current state of the door"`
 }
 
@@ -40,10 +39,6 @@ func main() {
 			panic(err)
 		}
 		fmt.Println("Door has been closed.")
-	case "interrupt" :
-		door := stepdoor.NewStepDoor(pinMapping)
-		door.Interrupt()
-		fmt.Printf("Door has been interrupted. Current state is %v\n", door.Current())
 	case "state" :
 		fmt.Printf("Door's current state is %v\n", stepdoor.NewStepDoor(pinMapping).Current())
 	default:

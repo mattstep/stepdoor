@@ -32,7 +32,7 @@ const (
 	CounterClockwise
 )
 
-const SteppingPeriod = 10 * time.Microsecond
+const SteppingPeriod = 1 * time.Millisecond
 
 // 4x microstepping * 580mm / (1.8deg/step * 8mm/360deg) = 240,000 microsteps
 const maxSteps = 58000
@@ -51,7 +51,7 @@ func NewStepperMotor(stepPinNumber int, directionPinNumber int, sleepPinNumber i
 
 func (s StepperMotor) Start() {
 	s.stepPin.Output()
-	s.stepPin.Low()
+	s.stepPin.High()
 
 	s.directionPin.Output()
 	s.directionPin.Low()
@@ -64,7 +64,6 @@ func (s StepperMotor) Step(count int) LimitError {
 	if s.asleep {
 		s.wake()
 	}
-
 	if s.steps + count < maxSteps {
 		for i:=0; i < count; i++ {
 			s.stepPin.Low()
