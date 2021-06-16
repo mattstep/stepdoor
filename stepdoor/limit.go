@@ -23,5 +23,6 @@ func (ls LimitSwitch) Start() {
 
 func (ls LimitSwitch) AtLimit() bool {
 	ls.gpioPin.PullUp()
+	defer ls.gpioPin.PullDown()
 	return ls.gpioPin.Read() == rpio.Low
 }
