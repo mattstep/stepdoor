@@ -18,15 +18,15 @@ func NewLimit(pinNumber int) *LimitSwitch {
 	return &LimitSwitch{gpioPin: pin}
 }
 
-func (ls LimitSwitch) Start() {
+func (ls *LimitSwitch) Start() {
 	ls.gpioPin.Input()
 }
 
-func (ls LimitSwitch) AtLimit() bool {
+func (ls *LimitSwitch) AtLimit() bool {
 	ls.gpioPin.PullUp()
 	return ls.gpioPin.Read() == rpio.Low
 }
 
-func (ls LimitSwitch) Sleep() {
+func (ls *LimitSwitch) Sleep() {
 	ls.gpioPin.PullOff()
 }

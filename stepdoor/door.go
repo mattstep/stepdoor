@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/stianeikeland/go-rpio/v4"
 	"sync"
+	"time"
 )
 
 type Door interface {
@@ -24,6 +25,8 @@ const (
 )
 
 const StepsPerLimitCheck = 4
+
+const LoggingFrequency = 1 * time.Second
 
 type StepDoor struct {
 	topLimit Limit
@@ -57,12 +60,16 @@ func NewStepDoor(mapping DoorPinMapping) *StepDoor {
 	return stepDoor
 }
 
-func (s StepDoor) Open() error {
-	defer s.stepper.LogSteps()
+func (s *StepDoor) Open() error {
+	ticker := time.NewTicker(LoggingFrequency)
+	quit := make(chan bool)
+	go s.periodicLogging(ticker, quit)
 
 	s.stepper.CounterClockwise()
 
 	err := s.moveToLimit(s.bottomLimit)
+
+	quit <- true
 
 	if err != nil {
 		log.Errorf("Stepper motor halted due to %v while opening", err)
@@ -74,12 +81,16 @@ func (s StepDoor) Open() error {
 	return nil
 }
 
-func (s StepDoor) Close() error {
-	defer s.stepper.LogSteps()
+func (s *StepDoor) Close() error {
+	ticker := time.NewTicker(LoggingFrequency)
+	quit := make(chan bool)
+	go s.periodicLogging(ticker, quit)
 
 	s.stepper.Clockwise()
 
 	err := s.moveToLimit(s.topLimit)
+
+	quit <- true
 
 	if err != nil {
 		log.Errorf("Stepper motor halted due to %v while closing", err)
@@ -89,7 +100,7 @@ func (s StepDoor) Close() error {
 	return nil
 }
 
-func (s StepDoor) Current() DoorState {
+func (s *StepDoor) Current() DoorState {
 	if s.topLimit.AtLimit() {
 		return Closed
 	}
@@ -99,11 +110,11 @@ func (s StepDoor) Current() DoorState {
 	return Semi
 }
 
-func (s StepDoor) Interrupt() {
+func (s *StepDoor) Interrupt() {
 	s.interrupt <- true
 }
 
-func (s StepDoor) moveToLimit(limit Limit) error {
+func (s *StepDoor) moveToLimit(limit Limit) error {
 	s.movingLock.Lock()
 	defer s.movingLock.Unlock()
 	defer limit.Sleep()
@@ -126,4 +137,16 @@ func (s StepDoor) moveToLimit(limit Limit) error {
 		}
 	}
 	return nil
+}
+
+func (s *StepDoor) periodicLogging(ticker *time.Ticker, quit chan bool) {
+	for {
+		select {
+		case <-ticker.C:
+			s.stepper.LogSteps()
+		case <-quit:
+			ticker.Stop()
+			return
+		}
+	}
 }

@@ -9,7 +9,7 @@ import (
 
 type Stepper interface {
 	Start()
-	Step(count int) LimitError
+	Step(count uint32) LimitError
 	Clockwise()
 	CounterClockwise()
 	Sleep()
@@ -21,7 +21,7 @@ type StepperMotor struct {
 	directionPin rpio.Pin
 	sleepPin rpio.Pin
 	direction Direction
-	steps int
+	steps uint32
 	asleep bool
 }
 
@@ -49,15 +49,16 @@ func NewStepperMotor(stepPinNumber int, directionPinNumber int, sleepPinNumber i
 	sm := &StepperMotor{
 		stepPin:      rpio.Pin(stepPinNumber),
 		directionPin: rpio.Pin(directionPinNumber),
-		sleepPin:	  rpio.Pin(sleepPinNumber),
-		direction: Clockwise,
-		steps: 0,
+		sleepPin:     rpio.Pin(sleepPinNumber),
+		direction:    Clockwise,
+		steps:        0,
+		asleep:       true,
 	}
 
 	return sm
 }
 
-func (s StepperMotor) Start() {
+func (s *StepperMotor) Start() {
 	s.stepPin.Output()
 	s.stepPin.High()
 
@@ -68,17 +69,17 @@ func (s StepperMotor) Start() {
 	s.sleepPin.High()
 }
 
-func (s StepperMotor) Step(count int) LimitError {
+func (s *StepperMotor) Step(count uint32) LimitError {
 	if s.asleep {
 		s.wake()
 	}
 	if s.steps + count < maxSteps {
-		for i:=0; i < count; i++ {
+		for i:=uint32(0); i < count; i++ {
 			s.stepPin.Low()
 			time.Sleep(SteppingPeriod / 2)
 			s.stepPin.High()
 			time.Sleep(SteppingPeriod / 2)
-			s.steps = s.steps + 1
+			s.steps++
 		}
 	} else {
 		return LimitError(fmt.Errorf("unable to continue stepping, limit reached"))
@@ -87,7 +88,7 @@ func (s StepperMotor) Step(count int) LimitError {
 	return nil
 }
 
-func (s StepperMotor) Clockwise() {
+func (s *StepperMotor) Clockwise() {
 	if s.direction == CounterClockwise {
 		s.direction = Clockwise
 		s.steps = 0
@@ -95,7 +96,7 @@ func (s StepperMotor) Clockwise() {
 	s.syncDirection()
 }
 
-func (s StepperMotor) CounterClockwise() {
+func (s *StepperMotor) CounterClockwise() {
 	if s.direction == Clockwise {
 		s.direction = CounterClockwise
 		s.steps = 0
@@ -103,7 +104,7 @@ func (s StepperMotor) CounterClockwise() {
 	s.syncDirection()
 }
 
-func (s StepperMotor) syncDirection() {
+func (s *StepperMotor) syncDirection() {
 	if s.direction == Clockwise {
 		s.directionPin.Write(rpio.Low)
 	} else {
@@ -111,12 +112,12 @@ func (s StepperMotor) syncDirection() {
 	}
 }
 
-func (s StepperMotor) Sleep() {
+func (s *StepperMotor) Sleep() {
 	s.sleepPin.Low()
 	s.asleep = true
 }
 
-func (s StepperMotor) wake() {
+func (s *StepperMotor) wake() {
 	s.sleepPin.High()
 	time.Sleep(1 * time.Millisecond)
 	s.asleep = false
