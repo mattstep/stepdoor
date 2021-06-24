@@ -58,6 +58,8 @@ func NewStepDoor(mapping DoorPinMapping) *StepDoor {
 }
 
 func (s StepDoor) Open() error {
+	defer s.stepper.LogSteps()
+	
 	s.stepper.CounterClockwise()
 
 	err := s.moveToLimit(s.bottomLimit)
@@ -73,6 +75,8 @@ func (s StepDoor) Open() error {
 }
 
 func (s StepDoor) Close() error {
+	defer s.stepper.LogSteps()
+
 	s.stepper.Clockwise()
 
 	err := s.moveToLimit(s.topLimit)

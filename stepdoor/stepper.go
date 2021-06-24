@@ -2,6 +2,7 @@ package stepdoor
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"github.com/stianeikeland/go-rpio/v4"
 	"time"
 )
@@ -12,6 +13,7 @@ type Stepper interface {
 	Clockwise()
 	CounterClockwise()
 	Sleep()
+	LogSteps()
 }
 
 type StepperMotor struct {
@@ -36,6 +38,12 @@ const SteppingPeriod = 1 * time.Millisecond
 
 // 4x microstepping * 580mm / (1.8deg/step * 8mm/360deg) = 240,000 microsteps
 const maxSteps = 58000
+
+func (s StepperMotor) LogSteps() {
+	log.WithFields(log.Fields{
+		"steps": s.steps,
+	}).Info("current step count")
+}
 
 func NewStepperMotor(stepPinNumber int, directionPinNumber int, sleepPinNumber int) *StepperMotor {
 	sm := &StepperMotor{
