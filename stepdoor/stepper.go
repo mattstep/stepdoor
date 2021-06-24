@@ -36,8 +36,8 @@ const (
 
 const SteppingPeriod = 1 * time.Millisecond
 
-// 4x microstepping * 580mm / (1.8deg/step * 8mm/360deg) = 240,000 microsteps
-const maxSteps = 58000
+// 4x microstepping * 420mm / (1.8deg/step * 8mm/360deg) = 42,000 microsteps
+const maxSteps = 42000
 
 func (s StepperMotor) LogSteps() {
 	log.WithFields(log.Fields{
