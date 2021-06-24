@@ -23,7 +23,7 @@ const (
 	Open
 )
 
-const StepsPerLimitCheck = 8
+const StepsPerLimitCheck = 4
 
 type StepDoor struct {
 	topLimit Limit
@@ -102,6 +102,7 @@ func (s StepDoor) Interrupt() {
 func (s StepDoor) moveToLimit(limit Limit) error {
 	s.movingLock.Lock()
 	defer s.movingLock.Unlock()
+	defer limit.Sleep()
 
 	for !limit.AtLimit() {
 

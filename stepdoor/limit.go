@@ -6,6 +6,7 @@ import "github.com/stianeikeland/go-rpio/v4"
 type Limit interface {
 	Start()
 	AtLimit() bool
+	Sleep()
 }
 
 type LimitSwitch struct {
@@ -23,6 +24,9 @@ func (ls LimitSwitch) Start() {
 
 func (ls LimitSwitch) AtLimit() bool {
 	ls.gpioPin.PullUp()
-	defer ls.gpioPin.PullDown()
 	return ls.gpioPin.Read() == rpio.Low
+}
+
+func (ls LimitSwitch) Sleep() {
+	ls.gpioPin.PullOff()
 }
